@@ -39,22 +39,22 @@
     (is (= (select-keys m ks) (fset/select-keys m ks)))
     (is (= (select-keys m [10 30 50]) (fset/select-key m 10 30 50)))
     (is (= (select-keys m [10 30 50]) (fset/macro-select-key* m 10 30 50)))
-    ; 1.5328734519517166E-5 core
-    ; 7.578890382659547E-6 fset (select-keys)
+    ; 9.490926433421638E-6 core
+    ; 5.179964282718473E-6 fset (select-keys)
     (is
       (nil?
         (println
           (b (select-keys m ks))
           (str "core\n" (b (fset/select-keys m ks)) " fset (select-keys)\n"))))
-    ; 2.157384036113676E-6 core
-    ; 1.3864857704082623E-6 fset (select-key)
+    ; 1.6243333499435255E-6 core
+    ; 1.0685761970483639E-6 fset (select-key)
     (is
       (nil?
         (println
           (b (select-keys m [10 30 50]))
           (str "core\n" (b (fset/select-key m 10 30 50)) " fset (select-key)\n"))))
-    ; 2.1298433591464467E-6 core
-    ; 1.8833288282458509E-6 fset (select-key*)
+    ; 1.561892435634897E-6 core
+    ; 9.645639735746669E-7 fset (select-key*)
     (is
       (nil?
         (println
