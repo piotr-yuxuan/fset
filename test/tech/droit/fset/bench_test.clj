@@ -38,20 +38,28 @@
         ks (range 0 100 10)]
     (is (= (select-keys m ks) (fset/select-keys m ks)))
     (is (= (select-keys m [10 30 50]) (fset/select-key m 10 30 50)))
-    ; 2.481968165076176E-6 core
-    ; 1.0907595441876438E-6 fset (select-keys)
+    (is (= (select-keys m [10 30 50]) (fset/macro-select-key* m 10 30 50)))
+    ; 1.1503219729118043E-5 core
+    ; 5.9193215709610244E-6 fset (select-keys)
     (is
       (nil?
         (println
           (b (select-keys m ks))
           (str "core\n" (b (fset/select-keys m ks)) " fset (select-keys)\n"))))
-    ; 8.155316297166944E-7 core
-    ; 4.1558029460823247E-7 fset (select-key)
+    ; 2.1251437221679156E-6 core
+    ; 1.2511706994653661E-6 fset (select-key)
     (is
       (nil?
         (println
           (b (select-keys m [10 30 50]))
-          (str "core\n" (b (fset/select-key m 10 30 50)) " fset (select-key)\n"))))))
+          (str "core\n" (b (fset/select-key m 10 30 50)) " fset (select-key)\n"))))
+    ; 1.9789946904771138E-6 core
+    ; 1.2395546725654051E-6 fset (select-key*)
+    (is
+      (nil?
+        (println
+          (b (select-keys m [10 30 50]))
+          (str "core\n" (b (fset/macro-select-key* m 10 30 50)) " fset (select-key*)\n"))))))
 
 (deftest ^:bench union-bench
   (let [s1 '#{{d d1 c c2 a a3 b b2} {d d2 c c1 a a3 b b3}

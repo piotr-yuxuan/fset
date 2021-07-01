@@ -113,6 +113,21 @@
          ^ITransientMap out (if v5 (.conj out v5) out)]
      (.persistent out))))
 
+(defmacro macro-select-key*
+  "Like `select-key` but expanded at compile time"
+  [m & ks]
+  (let [out# (vary-meta (gensym "out") assoc :tag `ITransientMap)
+        m# (gensym "m")
+        vs (mapcat (fn [k#]
+                     (let [v# (gensym "v")]
+                       `[~v# (clojure.lang.RT/find ~m# ~k#)
+                         ~out# (if ~v# (.conj ~out# ~v#) ~out#)]))
+                   ks)]
+    `(let [~m# ~m
+           ~out# (.asTransient PersistentArrayMap/EMPTY)
+           ~@vs]
+       (.persistent ~out#))))
+
 (defn select-keys
   "Like core/select-keys but uses a transient to collect results.
   Note: differently from core/select-keys, it doesn't retain metadata.
