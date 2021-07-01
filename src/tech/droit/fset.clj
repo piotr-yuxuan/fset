@@ -117,15 +117,13 @@
   "Like `select-key` but expanded at compile time"
   [m & ks]
   (let [out# (vary-meta (gensym "out") assoc :tag `ITransientMap)
-        m# (gensym "m")
-        vs (mapcat (fn [k#]
-                     (let [v# (gensym "v")]
-                       `[~v# (clojure.lang.RT/find ~m# ~k#)
-                         ~out# (if ~v# (.conj ~out# ~v#) ~out#)]))
-                   ks)]
+        m# (vary-meta (gensym "m") assoc :tag `java.util.Map)]
     `(let [~m# ~m
-           ~out# (.asTransient PersistentArrayMap/EMPTY)
-           ~@vs]
+           ~out# (.asTransient PersistentArrayMap/EMPTY)]
+       ~@(map (fn [k#]
+                `(when (.containsKey ~m# ~k#)
+                   (.conj ~out# (clojure.lang.RT/find ~m# ~k#))))
+              ks)
        (.persistent ~out#))))
 
 (defn select-keys
